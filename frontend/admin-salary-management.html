@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Management - Crushi Agency EMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700&family=Public+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#F97316',
+                        primaryHover: '#EA580C',
+                        primaryLight: '#FFEDD5'
+                    },
+                    fontFamily: {
+                        heading: ['Outfit', 'sans-serif'],
+                        body: ['Public Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body bg-slate-50 min-h-screen">
+    
+    <!-- Sidebar -->
+    <aside class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200 z-50 overflow-y-auto">
+        <div class="p-6 border-b border-slate-200">
+            <h1 class="font-heading text-2xl font-bold text-primary">Crushi Agency</h1>
+        </div>
+        
+        <nav class="p-4 space-y-1" data-testid="sidebar-navigation">
+            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-all" data-testid="nav-dashboard">
+                <i class="ph ph-house text-xl"></i>
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <a href="employees.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-all" data-testid="nav-employees">
+                <i class="ph ph-users text-xl"></i>
+                <span class="font-medium">Employees</span>
+            </a>
+            <a href="admin-salary-management.html" class="flex items-center gap-3 px-4 py-3 text-orange-700 bg-orange-50 border-r-2 border-primary rounded-lg transition-all" data-testid="nav-salary">
+                <i class="ph ph-wallet text-xl"></i>
+                <span class="font-medium">Salary Management</span>
+            </a>
+            <a href="leaves-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-all" data-testid="nav-leaves">
+                <i class="ph ph-calendar text-xl"></i>
+                <span class="font-medium">Leave Management</span>
+            </a>
+            <a href="report.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-all" data-testid="nav-reports">
+                <i class="ph ph-chart-line text-xl"></i>
+                <span class="font-medium">Reports</span>
+            </a>
+            <a href="#" onclick="handleLogout(event)" class="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-all mt-8" data-testid="nav-logout">
+                <i class="ph ph-sign-out text-xl"></i>
+                <span class="font-medium">Logout</span>
+            </a>
+        </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="ml-64 min-h-screen">
+        
+        <!-- Top Bar -->
+        <header class="bg-white border-b border-slate-200 px-6 md:px-12 py-6 sticky top-0 z-40">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="font-heading text-xl md:text-2xl font-bold text-slate-800">Salary Management</h2>
+                    <p class="text-slate-500 text-sm mt-1">Manage employee salaries and overtime</p>
+                </div>
+                <div class="flex items-center gap-4">
+                <button 
+                    onclick="openAddSalaryModal()" 
+                    data-testid="add-salary-button"
+                    class="bg-primary hover:bg-primaryHover text-white px-4 md:px-6 py-2.5 rounded-full font-medium transition-all flex items-center gap-2 shadow-sm hover:shadow-lg active:scale-95"
+                >
+                    <i class="ph ph-plus-circle"></i>
+                    <span class="hidden md:inline">Add/Update Salary</span>
+                    <span class="md:hidden">Add</span>
+                </button>
+                <button 
+                    onclick="exportSalaryExcel()" 
+                    class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-full font-medium transition-all flex items-center gap-2 shadow-sm hover:shadow-lg active:scale-95"
+                >
+                    <i class="ph ph-file-xls"></i>
+                    <span class="hidden md:inline">Export Excel</span>
+                </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content -->
+        <div class="p-6 md:p-12">
+            
+            <!-- Salary Table -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] p-6 md:p-8 mb-8">
+                <h3 class="font-heading text-lg md:text-xl font-semibold text-slate-800 mb-6">Employee Salary Details</h3>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full" id="salaryTable">
+                        <thead>
+                            <tr class="border-b border-slate-200">
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-slate-700">Employee</th>
+                                <th class="text-left py-3 px-4 text-sm font-semibold text-slate-700">Department</th>
+                                <th class="text-right py-3 px-4 text-sm font-semibold text-slate-700">Basic Salary</th>
+                                <th class="text-center py-3 px-4 text-sm font-semibold text-slate-700">OT Hours</th>
+                                <th class="text-right py-3 px-4 text-sm font-semibold text-slate-700">OT Payment</th>
+                                <th class="text-right py-3 px-4 text-sm font-semibold text-slate-700">Total Salary</th>
+                                <th class="text-center py-3 px-4 text-sm font-semibold text-slate-700">Status</th>
+                                <th class="text-center py-3 px-4 text-sm font-semibold text-slate-700">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salaryTableBody">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                
+                <!-- Bar Chart: Employee Salary Distribution -->
+                <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] p-6 md:p-8">
+                    <h3 class="font-heading text-lg md:text-xl font-semibold text-slate-800 mb-6">Employee Salary Distribution</h3>
+                    <canvas id="salaryDistributionChart" data-testid="salary-distribution-chart"></canvas>
+                </div>
+                
+                <!-- Line Chart: Monthly Salary Expense -->
+                <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] p-6 md:p-8">
+                    <h3 class="font-heading text-lg md:text-xl font-semibold text-slate-800 mb-6">Monthly Salary Expense</h3>
+                    <canvas id="monthlySalaryChart" data-testid="monthly-salary-chart"></canvas>
+                </div>
+                
+            </div>
+            
+            <!-- Pie Chart: Department-wise Salary Share -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] p-6 md:p-8">
+                <h3 class="font-heading text-lg md:text-xl font-semibold text-slate-800 mb-6">Department-wise Salary Share</h3>
+                <div class="max-w-md mx-auto">
+                    <canvas id="departmentSalaryChart" data-testid="department-salary-chart"></canvas>
+                </div>
+            </div>
+            
+        </div>
+        
+    </main>
+    <div id="appFooter"></div>
+    <div id="loadingOverlay" 
+     class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="bg-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3">
+        <div class="animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent"></div>
+        <span class="text-slate-700 font-medium text-sm">Exporting Excel...</span>
+    </div>
+    </div>
+    
+    <!-- Add/Edit Salary Modal -->
+    <div id="salaryModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform scale-95 opacity-0 transition-all duration-300" id="salaryModalContent">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-heading text-2xl font-bold text-slate-800" id="salaryModalTitle">Add Salary</h3>
+                <button onclick="closeSalaryModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="ph ph-x text-2xl"></i>
+                </button>
+            </div>
+            
+            <form id="salaryForm" class="space-y-5">
+                <input type="hidden" id="salaryEmployeeId">
+                
+                    <div id="employeeSelectWrapper">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            Employee
+                        </label>
+
+                        <!-- Used in ADD mode -->
+                        <select 
+                            id="salaryEmployee"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50"
+                        ></select>
+
+                        <!-- Used in EDIT mode -->
+                        <p 
+                            id="salaryEmployeeName"
+                            class="hidden px-4 py-3 rounded-xl bg-slate-100 text-slate-700 font-medium"
+                        ></p>
+                    </div>
+
+                <div>
+                    <label for="basicSalary" class="block text-sm font-medium text-slate-700 mb-2">Basic Salary (₹)</label>
+                    <input 
+                        type="number" 
+                        id="basicSalary" 
+                        data-testid="basic-salary-input"
+                        placeholder="e.g., 50000"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none text-slate-800"
+                        required
+                        min="0"
+                    >
+                </div>
+                
+                <div>
+                    <label for="overtimeHours" class="block text-sm font-medium text-slate-700 mb-2">Overtime Hours</label>
+                    <input 
+                        type="number" 
+                        id="overtimeHours" 
+                        data-testid="overtime-hours-input"
+                        placeholder="e.g., 10"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none text-slate-800"
+                        required
+                        min="0"
+                        oninput="calculateOvertimePayment()"
+                    >
+                </div>
+                
+                <div class="bg-orange-50 rounded-xl p-4 border border-orange-100">
+                    <p class="text-sm text-orange-800 mb-2"><strong>Overtime Rate:</strong> ₹100 per hour</p>
+                    <p class="text-sm text-orange-800"><strong>Overtime Payment:</strong> <span id="overtimePaymentPreview">₹0</span></p>
+                    <p class="text-sm text-orange-800 mt-2 font-semibold"><strong>Total Salary:</strong> <span id="totalSalaryPreview">₹0</span></p>
+                </div>
+                
+                <div class="flex gap-3 pt-4">
+                    <button 
+                        type="button" 
+                        onclick="closeSalaryModal()" 
+                        class="flex-1 px-4 py-3 rounded-full border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-all"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="submit" 
+                        data-testid="save-salary-button"
+                        class="flex-1 px-4 py-3 rounded-full bg-primary hover:bg-primaryHover text-white font-medium transition-all shadow-sm hover:shadow-lg active:scale-95"
+                    >
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="toast" class="hidden"></div>
+    <canvas id="salaryDistributionChart"></canvas>
+    <canvas id="monthlySalaryChart"></canvas>
+    <canvas id="departmentSalaryChart"></canvas>
+
+
+
+    <div id="appFooter"></div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="js/salary.js"></script>
+    <script src="./js/common.js"></script>
+
+</body>
+</html>

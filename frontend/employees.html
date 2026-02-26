@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management - Crushi Agency EMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700&family=Public+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#F97316',
+                        primaryHover: '#EA580C',
+                        primaryLight: '#FFEDD5'
+                    },
+                    fontFamily: {
+                        heading: ['Outfit', 'sans-serif'],
+                        body: ['Public Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body bg-slate-50 min-h-screen">
+    
+    <!-- Sidebar -->
+    <aside class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200 z-50">
+        <div class="p-6 border-b border-slate-200">
+            <h1 class="font-heading text-2xl font-bold text-primary">Crushi Agency</h1>
+        </div>
+        
+        <nav class="p-4 space-y-1">
+            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-all">
+                <i class="ph ph-house text-xl"></i>
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <a href="employees.html" class="flex items-center gap-3 px-4 py-3 text-orange-700 bg-orange-50 border-r-2 border-primary rounded-lg transition-all">
+                <i class="ph ph-users text-xl"></i>
+                <span class="font-medium">Employees</span>
+            </a>
+            <a href="admin-salary-management.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-all">
+                <i class="ph ph-wallet text-xl"></i>
+                <span class="font-medium">Salary Management</span>
+            </a>
+            <a href="leaves-admin.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-all">
+                <i class="ph ph-calendar text-xl"></i>
+                <span class="font-medium">Leave Management</span>
+            </a>
+            <a href="report.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-all">
+                <i class="ph ph-chart-line text-xl"></i>
+                <span class="font-medium">Reports</span>
+            </a>
+            <a href="#" onclick="handleLogout(event)" class="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-all mt-8" data-testid="nav-logout">
+                <i class="ph ph-sign-out text-xl"></i>
+                <span class="font-medium">Logout</span>
+            </a>
+        </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="ml-64 min-h-screen">
+        
+        <!-- Top Bar -->
+        <header class="bg-white border-b border-slate-200 px-12 py-6 sticky top-0 z-40">
+            <div class="flex items-center justify-between">
+                <h2 class="font-heading text-2xl font-bold text-slate-800">Employee Management</h2>
+                <div class="flex items-center gap-4">
+                    <img src="https://ui-avatars.com/api/?name=Admin+User&background=F97316&color=fff" alt="Admin" class="w-10 h-10 rounded-full">
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content -->
+        <div class="p-12">
+            
+            <!-- Actions Bar -->
+            <div class="flex items-center justify-between mb-8 gap-4 flex-wrap">
+                <div class="flex items-center gap-4 flex-1">
+                    <div class="relative flex-1 max-w-md">
+                        <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
+                        <input 
+                            type="text" 
+                            id="searchEmployee" 
+                            data-testid="employee-search-input"
+                            class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none placeholder:text-slate-400 text-slate-800"
+                            placeholder="Search employees..."
+                        >
+                    </div>
+                    <select id="filterDepartment" data-testid="employee-filter-department" class="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none text-slate-700">
+                        <option value="">All Departments</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Management">Management</option>
+                        <option value="Finance">Finance</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-3">
+    
+                    <button 
+                        onclick="exportEmployeesExcel()"
+                        class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-full shadow-sm hover:shadow-lg transition-all duration-200 active:scale-95 flex items-center gap-2"
+                    >
+                        <i class="ph ph-file-xls text-lg"></i>
+                        <span>Export</span>
+                    </button>
+
+                    <button 
+                        onclick="openAddEmployeeModal()" 
+                        data-testid="add-employee-button"
+                        class="bg-primary hover:bg-primaryHover text-white font-medium py-3 px-6 rounded-full shadow-sm hover:shadow-lg transition-all duration-200 active:scale-95 flex items-center gap-2"
+                    >
+                        <i class="ph ph-plus-circle text-lg"></i>
+                        <span>Add Employee</span>
+                    </button>
+
+                </div>
+            </div>
+            
+            <!-- Employees Table -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] overflow-hidden">
+                <div class="overflow-x-auto">
+                   <table id="employeeTable" class="w-full" data-testid="employees-table">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200">
+                            <th class="py-4 px-6 text-left">ID</th>
+                            <th class="py-4 px-6 text-left">Name</th>
+                            <th class="py-4 px-6 text-left">Email</th> <!-- ✅ NEW -->
+                            <th class="py-4 px-6 text-left">Department</th>
+                            <th class="py-4 px-6 text-left">Designation</th>
+                            <th class="py-4 px-6 text-left">Phone</th>
+                            <th class="py-4 px-6 text-left">Join Date</th>
+                            <th class="py-4 px-6 text-left">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeesTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+        
+    </main>
+    <div id="appFooter"></div>
+    <div id="loadingOverlay" 
+     class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="bg-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3">
+        <div class="animate-spin rounded-full h-5 w-5 border-2 border-primary border-t-transparent"></div>
+        <span class="text-slate-700 font-medium text-sm">Exporting Excel...</span>
+    </div>
+    </div>
+    
+    <!-- Add/Edit Employee Modal -->
+    <div id="employeeModal" class="hidden fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 transform transition-all scale-100" data-testid="employee-modal">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-heading text-2xl font-bold text-slate-800" id="modalTitle">Add Employee</h3>
+                <button onclick="closeEmployeeModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="ph ph-x text-2xl"></i>
+                </button>
+            </div>
+            
+            <form id="employeeForm" class="space-y-6">
+                <input type="hidden" id="employeeId">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="employeeName" class="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
+                        <input 
+                            type="text" 
+                            id="employeeName" 
+                            data-testid="employee-name-input"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none text-slate-800"
+                            required
+                        >
+                    </div>
+                    <div>
+                    <label for="employeeEmail" class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                    <input 
+                        type="email" 
+                        id="employeeEmail"
+                        data-testid="employee-email-input"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none text-slate-800"
+                        required>
+                    </div>   
+                    <div>
+                        <label for="employeeDepartment" class="block text-sm font-medium text-slate-700 mb-2">Department</label>
+                        <select 
+                            id="employeeDepartment" 
+                            data-testid="employee-department-input"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none text-slate-800"
+                            required
+                        >
+                            <option value="">Select Department</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Management">Management</option>
+                            <option value="Finance">Finance</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="employeeDesignation" class="block text-sm font-medium text-slate-700 mb-2">Designation</label>
+                        <input 
+                            type="text" 
+                            id="employeeDesignation" 
+                            data-testid="employee-designation-input"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none text-slate-800"
+                            required
+                        >
+                    </div>
+                    
+                    <div>
+                        <label for="employeePhone" class="block text-sm font-medium text-slate-700 mb-2">Phone</label>
+                        <input 
+                            type="tel" 
+                            id="employeePhone" 
+                            data-testid="employee-phone-input"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none text-slate-800"
+                            required
+                        >
+                    </div>
+                    
+                    <div>
+                        <label for="employeeJoinDate" class="block text-sm font-medium text-slate-700 mb-2">Join Date</label>
+                        <input 
+                            type="date" 
+                            id="employeeJoinDate" 
+                            data-testid="employee-joindate-input"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none text-slate-800"
+                            required
+                        >
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-end gap-4 pt-4">
+                    <button 
+                        type="button" 
+                        onclick="closeEmployeeModal()" 
+                        class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium py-3 px-6 rounded-full transition-all duration-200"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="submit"
+                        id="employeeSubmitBtn" 
+                        data-testid="employee-submit-button"
+                        class="bg-primary hover:bg-primaryHover text-white font-medium py-3 px-8 rounded-full shadow-sm hover:shadow-lg transition-all duration-200 active:scale-95"
+                    >
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="toast"
+     class="fixed bottom-6 right-6 hidden bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg transition-all">
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="./js/employees.js"></script>
+    <script src="./js/common.js"></script>
+
+
+</body>
+</html>

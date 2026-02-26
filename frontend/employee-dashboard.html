@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Salary - Crushi Agency EMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700&family=Public+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#F97316',
+                        primaryHover: '#EA580C',
+                        primaryLight: '#FFEDD5'
+                    },
+                    fontFamily: {
+                        heading: ['Outfit', 'sans-serif'],
+                        body: ['Public Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body bg-slate-50 min-h-screen">
+    
+    <!-- Sidebar -->
+    <aside class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200 z-50">
+        <div class="p-6 border-b border-slate-200">
+            <h1 class="font-heading text-2xl font-bold text-primary">Crushi Agency</h1>
+        </div>
+        
+        <nav class="p-4 space-y-1" data-testid="sidebar-navigation">
+            <a href="employee-dashboard.html" class="flex items-center gap-3 px-4 py-3 text-orange-700 bg-orange-50 border-r-2 border-primary rounded-lg transition-all" data-testid="nav-dashboard">
+                <i class="ph ph-house text-xl"></i>
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <a href="employee-payslip.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-all" data-testid="nav-my-salary">
+                <i class="ph ph-wallet text-xl"></i>
+                <span class="font-medium">My Salary</span>
+            </a>
+            <a href="leaves-employee.html" class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 rounded-lg transition-all" data-testid="nav-apply-leave">
+                <i class="ph ph-calendar-plus text-xl"></i>
+                <span class="font-medium">Apply Leave</span>
+            </a>
+            <a href="#" onclick="handleLogout(event)" class="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-all mt-8" data-testid="nav-logout">
+                <i class="ph ph-sign-out text-xl"></i>
+                <span class="font-medium">Logout</span>
+            </a>
+        </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="ml-64 min-h-screen">
+        
+        <!-- Top Bar -->
+        <header class="bg-white border-b border-slate-200 px-6 md:px-12 py-6 sticky top-0 z-40">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="font-heading text-xl md:text-2xl font-bold text-slate-800">Welcome, <span id="employeeName">Employee</span></h2>
+                    <p class="text-slate-500 text-sm mt-1" id="currentDate"></p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <img src="https://ui-avatars.com/api/?name=Employee+User&background=F97316&color=fff" alt="Employee" class="w-10 h-10 rounded-full" data-testid="employee-avatar">
+                </div>
+            </div>
+        </header>
+        
+        <!-- Dashboard Content -->
+        <div class="p-6 md:p-12">
+            
+            <!-- Welcome Card -->
+            <div class="bg-gradient-to-br from-primary to-orange-600 rounded-2xl shadow-lg p-8 mb-8 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-heading text-2xl md:text-3xl font-bold mb-2">Your Dashboard</h3>
+                        <p class="text-orange-100">View your salary details and manage leaves</p>
+                    </div>
+                    <i class="ph ph-briefcase text-6xl opacity-20"></i>
+                </div>
+            </div>
+            
+            <!-- Salary Details Section -->
+            <div id="salary" class="mb-8">
+                <h3 class="font-heading text-xl md:text-2xl font-bold text-slate-800 mb-6">Salary Details</h3>
+                
+                <div id="salaryContent">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Leave Balance Card -->
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] p-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-heading text-xl font-semibold text-slate-800">Leave Balance</h3>
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <i class="ph ph-calendar-check text-green-600 text-2xl"></i>
+                    </div>
+                </div>
+                <p class="text-4xl font-heading font-bold text-slate-800">
+                <span id="leaveBalance">0</span> Days</p>
+                <p class="text-slate-500 text-sm mt-2">Available leave balance</p>
+                <a href="leaves-employee.html" class="inline-block mt-4 text-primary hover:text-primaryHover font-medium text-sm">
+                    Apply for Leave →
+                </a>
+            </div>
+            
+        </div>
+        
+    </main>
+    <div id="appFooter"></div>
+
+    <script src="js/employee-dashboard.js"></script>
+    <script src="js/common.js"></script>
+</body>
+</html>
